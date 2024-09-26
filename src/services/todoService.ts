@@ -86,7 +86,9 @@ export class TodoService {
   }
 
   async getCompletedTodos() {
-    const result = await this.conn.query('SELECT * FROM Todo WHERE is_completed = true');
+    const result = await this.conn.query(
+      'SELECT * FROM Todo WHERE is_completed = true AND category_id IS NOT NULL'
+    );
     return result;
   }
 }
