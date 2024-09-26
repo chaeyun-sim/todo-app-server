@@ -60,6 +60,16 @@ async function createTables() {
     await conn.query(createTableTodo);
     await conn.query(createTableReminder);
     console.log('Tables created successfully (if they did not exist).');
+
+    const insertDefaultTodo = `
+      INSERT INTO Todo (user_id, category_id, title, memo)
+      SELECT id, NULL, '기본 투두', '투두를 테스트해보세요!'
+      FROM User
+      WHERE id NOT IN (SELECT DISTINCT user_id FROM Todo)
+      LIMIT 1;
+    `;
+    await conn.query(insertDefaultTodo);
+    console.log('Default Todo item added successfully.');
   } catch (err) {
     console.error('Error creating tables:', err);
   } finally {
