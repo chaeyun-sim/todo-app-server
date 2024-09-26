@@ -10,16 +10,14 @@ router.use(Middleware);
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { target, userId } = req.query;
+    const { target, userId } = req.query as { target?: string; userId?: string };
 
-    // userId가 문자열이 아니거나 숫자로 변환할 수 없는 경우 에러 처리
-    if (typeof userId !== 'string' || isNaN(Number(userId))) {
+    if (userId !== undefined && (typeof userId !== 'string' || isNaN(Number(userId)))) {
       return res.status(400).json({ success: false, message: 'Invalid userId' });
     }
 
-    // target이 유효한 값인지 확인
     if (target && !['yesterday', 'today', 'tomorrow'].includes(target as string)) {
-      return res.status(400).json({ success: false, message: 'Invalid target' });
+      return res.status(400).json({ success: false, message: 'Invalid or missing target' });
     }
 
     const result = await req.todoService.getTodosByTarget(
