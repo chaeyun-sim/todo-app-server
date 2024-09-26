@@ -25,12 +25,14 @@ export class TodoService {
   }
 
   async addTodo({
+    user_id,
     title,
     start_date,
     end_date,
     memo,
     category_id,
   }: {
+    user_id: number | null;
     title: string;
     start_date: string;
     end_date: string;
@@ -40,8 +42,8 @@ export class TodoService {
     const validCategoryId = await this.validateCategoryId(category_id);
 
     await this.conn.query(
-      'INSERT INTO Todo (title, start_date, end_date, memo, category_id) VALUES (?, ?, ?, ?, ?)',
-      [title, start_date, end_date, memo, validCategoryId === 0 ? null : validCategoryId]
+      'INSERT INTO Todo (user_id, title, start_date, end_date, memo, category_id) VALUES (?, ?, ?, ?, ?, ?)',
+      [user_id, title, start_date, end_date, memo, validCategoryId === 0 ? null : validCategoryId]
     );
   }
 
