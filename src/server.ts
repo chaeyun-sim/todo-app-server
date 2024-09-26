@@ -20,12 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://todo-app-client-sepia-gamma.vercel.app/'],
+  origin: [process.env.CLIENT_LOCAL_URL as string, process.env.CLIENT_PRODUCTION_URL as string],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-app.use('*', cors(corsOptions));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
