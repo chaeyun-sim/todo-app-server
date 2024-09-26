@@ -16,17 +16,21 @@ import createTables from './config/createTable';
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 const corsOptions = {
-  origin: [process.env.CLIENT_LOCAL_URL as string, process.env.CLIENT_PRODUCTION_URL as string],
+  origin: [
+    process.env.CLIENT_LOCAL_URL as string,
+    process.env.CLIENT_PRODUCTION_URL as string,
+  ].filter(Boolean),
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
@@ -36,7 +40,6 @@ app.get('/', (_req, res) => {
 
 app.use('/api/auth', authRoute);
 app.use(authMiddleware);
-
 app.use('/api/todo', todoRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/reminder', reminderRoute);
