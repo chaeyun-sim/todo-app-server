@@ -4,8 +4,11 @@ import { TodoItem } from '../types/types';
 export class TodoService {
   constructor(private conn: any) {}
 
-  async getTodosByTarget(target?: 'yesterday' | 'today' | 'tomorrow'): Promise<TodoItem[]> {
-    const rows = await this.conn.query('SELECT * FROM Todo');
+  async getTodosByTarget(
+    userId: number,
+    target?: 'yesterday' | 'today' | 'tomorrow'
+  ): Promise<TodoItem[]> {
+    const rows = await this.conn.query('SELECT * FROM Todo WHERE user_id = ?', userId);
     const dates = getDates();
     const targetDate = dates[target || 'today'];
 

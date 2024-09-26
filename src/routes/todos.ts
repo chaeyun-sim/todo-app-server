@@ -6,13 +6,26 @@ const router = express.Router();
 router.use(Middleware);
 
 // GET "/" - 특정 날의 투두 데이터
-// target = 'yesterday' | 'today' | 'tomorrow'
+// target = 'yesterday' | 'today' | 'tomorrow', userId
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { target } = req.query as { target?: 'yesterday' | 'today' | 'tomorrow' };
+    const { target, userId } = req.query;
 
-    const result = await req.todoService.getTodosByTarget(target);
+    // userId가 문자열이 아니거나 숫자로 변환할 수 없는 경우 에러 처리
+    if (typeof userId !== 'string' || isNaN(Number(userId))) {
+      return res.status(400).json({ success: false, message: 'Invalid userId' });
+    }
+
+    // target이 유효한 값인지 확인
+    if (target && !['yesterday', 'today', 'tomorrow'].includes(target as string)) {
+      return res.status(400).json({ success: false, message: 'Invalid target' });
+    }
+
+    const result = await req.todoService.getTodosByTarget(
+      Number(userId),
+      target as 'yesterday' | 'today' | 'tomorrow' | undefined
+    );
 
     res.json({ success: true, data: result });
   })
