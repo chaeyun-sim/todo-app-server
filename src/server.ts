@@ -16,18 +16,7 @@ import createTables from './config/createTable';
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const corsOptions = {
-  origin: [
-    process.env.CLIENT_LOCAL_URL as string,
-    process.env.CLIENT_PRODUCTION_URL as string,
-  ].filter(Boolean),
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
