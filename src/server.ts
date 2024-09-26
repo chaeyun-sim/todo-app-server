@@ -33,9 +33,9 @@ app.get('/', (_req, res) => {
   res.send('Hello World!');
 });
 
+app.use('/api/auth', authRoute);
 app.use(authMiddleware);
 
-app.use('/api/auth', authRoute);
 app.use('/api/todo', todoRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/reminder', reminderRoute);
