@@ -29,10 +29,7 @@ router.get(
       }
     }
 
-    const result = await req.todoService.getTodosByTarget(
-      userId,
-      target as 'yesterday' | 'today' | undefined
-    );
+    const result = await req.todoService.getTodosByTarget(userId, target as 'yesterday' | 'today');
 
     res.json({ success: true, data: result });
   })

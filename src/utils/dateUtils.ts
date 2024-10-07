@@ -6,13 +6,13 @@ export function getDateString(date?: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export function getDates() {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+export function getDates(target: 'today' | 'yesterday'): string {
+  const now = new Date();
+  const kstTime = new Date(now.getTime() + 9 * 60 * 60 * 1000);
 
-  return {
-    yesterday: getDateString(yesterday),
-    today: getDateString(today),
-  };
+  if (target === 'yesterday') {
+    kstTime.setDate(kstTime.getDate() - 1);
+  }
+
+  return kstTime.toISOString().split('T')[0];
 }

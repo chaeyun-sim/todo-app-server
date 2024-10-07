@@ -5,26 +5,25 @@ export class TodoService {
   constructor(private conn: any) {}
 
   async getTodosByTarget(userId?: string, target?: 'yesterday' | 'today'): Promise<TodoItem[]> {
-    const dates = getDates();
-    const targetDate = target ? dates[target] : null;
+    let query: string;
+    let values: (string | number)[] = [];
 
-    let query = 'SELECT * FROM Todo';
-    const params: (string | number)[] = [];
-
-    if (userId || targetDate) {
-      query += ' WHERE';
-      if (userId) {
-        query += ' user_id = ?';
-        params.push(parseInt(userId, 10));
-      }
-      if (targetDate) {
-        if (userId) query += ' AND';
-        query += ' DATE(start_date) = ?';
-        params.push(targetDate);
-      }
+    if (target && userId) {
+      const targetDate = getDates(target);
+      query = 'SELECT * FROM Todo WHERE user_id = ? AND DATE(start_date) = ?';
+      values = [parseInt(userId, 10), targetDate];
+    } else if (userId) {
+      query = 'SELECT * FROM Todo WHERE user_id = ?';
+      values = [parseInt(userId, 10)];
+    } else if (target) {
+      const targetDate = getDates(target);
+      query = 'SELECT * FROM Todo WHERE DATE(start_date) = ?';
+      values = [targetDate];
+    } else {
+      query = 'SELECT * FROM Todo';
     }
 
-    const rows = await this.conn.query(query, params);
+    const rows = await this.conn.query(query, values);
 
     return rows.sort((a: TodoItem, b: TodoItem) => {
       const dateA = new Date(a.start_date);
