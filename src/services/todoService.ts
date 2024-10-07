@@ -1,27 +1,28 @@
-import { getDateString, getDates } from '../utils/dateUtils';
+import { getDates } from '../utils/dateUtils';
 import { TodoItem } from '../types/types';
 
 export class TodoService {
   constructor(private conn: any) {}
 
-  async getTodosByTarget(userId: number, target?: 'yesterday' | 'today'): Promise<TodoItem[]> {
-    const rows = await this.conn.query('SELECT * FROM Todo WHERE user_id = ?', userId);
+  async getTodosByTarget(userId?: number, target?: 'yesterday' | 'today'): Promise<TodoItem[]> {
     const dates = getDates();
     const targetDate = dates[target || 'today'];
 
-    return rows
-      .filter((row: TodoItem) => {
-        const startDate =
-          typeof row.start_date === 'string'
-            ? row.start_date
-            : getDateString(row.start_date as Date);
-        return startDate.startsWith(targetDate);
-      })
-      .sort((a: TodoItem, b: TodoItem) => {
-        const dateA = new Date(a.start_date);
-        const dateB = new Date(b.start_date);
-        return Number(a.is_completed) - Number(b.is_completed) || dateA.getTime() - dateB.getTime();
-      });
+    if (!userId && !target) {
+      const rows = await this.conn.query('SELECT * FROM Todo');
+      return rows;
+    }
+
+    const rows = await this.conn.query(
+      'SELECT * FROM Todo WHERE user_id = ? AND DATE(start_date) = ?',
+      [userId, targetDate]
+    );
+
+    return rows.sort((a: TodoItem, b: TodoItem) => {
+      const dateA = new Date(a.start_date);
+      const dateB = new Date(b.start_date);
+      return Number(a.is_completed) - Number(b.is_completed) || dateA.getTime() - dateB.getTime();
+    });
   }
 
   async addTodo({

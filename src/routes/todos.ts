@@ -10,9 +10,9 @@ router.use(Middleware);
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { target, userId } = req.query as { target?: string; userId?: string };
+    const { target, userId } = req.query as { target: string; userId: string };
 
-    if (userId !== undefined && (typeof userId !== 'string' || isNaN(Number(userId)))) {
+    if (userId && isNaN(Number(userId))) {
       return res.status(400).json({ success: false, message: 'Invalid userId' });
     }
 
