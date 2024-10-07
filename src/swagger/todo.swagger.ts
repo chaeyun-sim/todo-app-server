@@ -13,7 +13,7 @@
  *         name: target
  *         schema:
  *           type: string
- *           enum: [yesterday, today, tomorrow]
+ *           enum: [yesterday, today]
  *         description: 조회할 날짜 (기본값 - today)
  *     responses:
  *       '200':

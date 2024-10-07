@@ -6,7 +6,7 @@ const router = express.Router();
 router.use(Middleware);
 
 // GET "/" - 특정 날의 투두 데이터
-// target = 'yesterday' | 'today' | 'tomorrow', userId
+// target = 'yesterday' | 'today', userId
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
@@ -16,13 +16,13 @@ router.get(
       return res.status(400).json({ success: false, message: 'Invalid userId' });
     }
 
-    if (target && !['yesterday', 'today', 'tomorrow'].includes(target as string)) {
+    if (target && !['yesterday', 'today'].includes(target as string)) {
       return res.status(400).json({ success: false, message: 'Invalid or missing target' });
     }
 
     const result = await req.todoService.getTodosByTarget(
       Number(userId),
-      target as 'yesterday' | 'today' | 'tomorrow' | undefined
+      target as 'yesterday' | 'today'
     );
 
     res.json({ success: true, data: result });
