@@ -10,17 +10,29 @@ router.use(Middleware);
 router.get(
   '/',
   asyncHandler(async (req: Request, res: Response) => {
-    const { target, userId } = req.query as { target: string; userId: string };
+    const { target, userId } = req.query as { target?: string; userId?: string };
 
-    if (userId && isNaN(Number(userId))) {
-      return res.status(400).json({ success: false, message: 'Invalid userId' });
+    if (!target && !userId) {
+      const result = await req.todoService.getTodosByTarget();
+      return res.json({ success: true, data: result });
     }
 
-    if (target && !['yesterday', 'today'].includes(target as string)) {
-      return res.status(400).json({ success: false, message: 'Invalid or missing target' });
+    if (userId) {
+      if (isNaN(Number(userId))) {
+        return res.status(400).json({ success: false, message: 'Invalid userId' });
+      }
     }
 
-    const result = await req.todoService.getTodosByTarget(userId, target as 'yesterday' | 'today');
+    if (target) {
+      if (!['yesterday', 'today'].includes(target)) {
+        return res.status(400).json({ success: false, message: 'Invalid target' });
+      }
+    }
+
+    const result = await req.todoService.getTodosByTarget(
+      userId,
+      target as 'yesterday' | 'today' | undefined
+    );
 
     res.json({ success: true, data: result });
   })
