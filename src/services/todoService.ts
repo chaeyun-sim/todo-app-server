@@ -4,7 +4,7 @@ import { TodoItem } from '../types/types';
 export class TodoService {
   constructor(private conn: any) {}
 
-  async getTodosByTarget(userId?: number, target?: 'yesterday' | 'today'): Promise<TodoItem[]> {
+  async getTodosByTarget(userId?: string, target?: 'yesterday' | 'today'): Promise<TodoItem[]> {
     const dates = getDates();
     const targetDate = dates[target || 'today'];
 
@@ -15,7 +15,7 @@ export class TodoService {
 
     const rows = await this.conn.query(
       'SELECT * FROM Todo WHERE user_id = ? AND DATE(start_date) = ?',
-      [userId, targetDate]
+      [parseInt(userId as string, 10), targetDate]
     );
 
     return rows.sort((a: TodoItem, b: TodoItem) => {

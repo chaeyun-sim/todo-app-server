@@ -20,10 +20,7 @@ router.get(
       return res.status(400).json({ success: false, message: 'Invalid or missing target' });
     }
 
-    const result = await req.todoService.getTodosByTarget(
-      Number(userId),
-      target as 'yesterday' | 'today'
-    );
+    const result = await req.todoService.getTodosByTarget(userId, target as 'yesterday' | 'today');
 
     res.json({ success: true, data: result });
   })
