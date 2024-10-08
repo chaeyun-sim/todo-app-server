@@ -9,6 +9,7 @@ const pool = mariadb.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: 'TODO_APP',
+  timezone: '+09:00',
 });
 
 export default pool;
